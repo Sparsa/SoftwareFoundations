@@ -159,3 +159,32 @@ Proof.
 Theorem lower_grade_F_Minus: lower_grade (Grade F Minus) = (Grade F Minus).
   Proof. simpl. reflexivity.
          Qed.
+Theorem lower_modifier:
+  forall (l: letter),
+    forall (m : modifier),
+    letter_comparison F l = Lt ->
+    grade_comparison ( lower_grade (Grade l m) ) (Grade l m) = Lt.
+Proof.
+  intros l. destruct m.
+  - simpl. rewrite letter_comparison_eq. intro h. reflexivity.
+  - simpl. rewrite letter_comparison_eq. intro h. reflexivity.
+  - destruct l.
+    + simpl. reflexivity.
+    + simpl. reflexivity.
+    + simpl. reflexivity.
+    + simpl. reflexivity.
+    + simpl. intro h. rewrite h. reflexivity.
+  Qed.
+
+
+
+
+Theorem lower_grade_lowers:
+  forall (g: grade),
+    grade_comparison (Grade F Minus) g = Lt ->
+    grade_comparison (lower_grade g) g = Lt.
+  Proof. intros g . destruct g eqn:Eg.
+           - simpl. destruct m.
+             {
+               - simpl. rewrite letter_comparison_eq..
+             }
