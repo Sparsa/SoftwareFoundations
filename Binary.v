@@ -1,4 +1,4 @@
-Inductive bin: Type :=
+Inductive bin: Type :lied=
   | z
   | B0 (n:bin)
   | B1 (n:bin).

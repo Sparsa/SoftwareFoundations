@@ -60,3 +60,10 @@ Lemma double_plus : forall n, double n = n + n.
          - reflexivity.
          - simpl. rewrite <- succ_add. rewrite Ihn'. reflexivity.
 Qed.
+
+Theorem even_S : forall n :nat,
+    even (S n) = negb' (even n).
+Proof. induction n as [|n' Ihn'].
+       - simpl. reflexivity.
+       - rewrite Ihn'. simpl. rewrite Basic.negation_fn_applied_twice. reflexivity.
+Qed.
