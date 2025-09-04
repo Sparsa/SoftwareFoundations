@@ -62,8 +62,8 @@ Lemma double_plus : forall n, double n = n + n.
 Qed.
 
 Theorem even_S : forall n :nat,
-    even (S n) = negb' (even n).
+    even (S n) = Basics.negb (even n).
 Proof. induction n as [|n' Ihn'].
        - simpl. reflexivity.
-       - rewrite Ihn'. simpl. rewrite Basic.negation_fn_applied_twice. reflexivity.
-Qed.
+       - rewrite Ihn'. simpl. rewrite negation_fn_applied_twice.  reflexivity. intros x. reflexivity.
+Qed
