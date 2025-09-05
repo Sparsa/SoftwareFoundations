@@ -93,3 +93,74 @@ Proof. intros n m p q.
        { rewrite add_comm. reflexivity.}
        rewrite H. reflexivity.
 Qed.
+
+(* formal vs. informal proofs *)
+(* informal proofs are algorithms
+ Formal proofs are code*)
+
+Theorem leb_refl : forall n : nat,
+    (n <=? n) = Basics.true.
+Proof. induction n as [| n' Ihn'].
+       - simpl. reflexivity.
+       - simpl. rewrite Ihn'. reflexivity.
+Qed.
+Theorem zero_neqb_S : forall n:nat,
+    O =? (S n) = Basics.false.
+Proof.  simpl. reflexivity.
+ Qed.
+
+Theorem andb_false_r : forall b : Basics.bool,
+    Basics.andb b Basics.false = Basics.false.
+Proof.
+intros b. destruct b.
+ - simpl.  reflexivity.
+ - simpl.  reflexivity.
+Qed.
+
+Theorem S_negb_0 : forall n : nat,
+    (S n) =? 0 = Basics.false.
+Proof.
+  intros n. simpl. reflexivity.
+Qed.
+
+Theorem mult_1_1 : forall n:nat, 1 * n = n.
+Proof. intros. simpl. rewrite add_r_0_firsttry. reflexivity.
+Qed.
+Theorem a113_spec : forall b c : Basics.bool,
+    Basics.orb ( Basics.andb b c )
+        (Basics.orb (Basics.negb b)
+        (Basics.negb c)) = Basics.true.
+Proof. intros b c. destruct b.
+       - simpl. destruct c.
+         + simpl. reflexivity.
+         + simpl. reflexivity.
+       - simpl. reflexivity.
+Qed.
+Theorem mult_plus_distr_r : forall n m p : nat,
+    (n+m) * p = (n*p) + (m*p).
+Proof. induction n as [| n' Ihn'].
+       - simpl. reflexivity.
+       - simpl. intros m p. rewrite Ihn'. rewrite add_assoc. reflexivity.
+Qed.
+
+Theorem mult_assoc : forall n m p : nat,
+    n * (m * p) = (n * m ) * p.
+Proof. induction n as [| n' Ihn'].
+       - simpl. reflexivity.
+       - simpl. intros m p . rewrite Ihn'. rewrite mult_plus_distr_r. reflexivity.
+Qed.
+
+
+
+Check incr  z.
+Check bin_to_nat(z).
+Compute incr z.
+Compute bin_to_nat(B1 z).
+Theorem bin_to_nat_pres_incr: forall b : bin,
+    bin_to_nat (incr b) = 1 + bin_to_nat b.
+Proof.
+  induction b as [ | b1' Ihb1' | b2' Ihb2' ].
+  - simpl. reflexivity.
+  - simpl. rewrite <- succ_add. rewrite add_r_0_firsttry. reflexivity.
+  - simpl. rewrite succ_add. rewrite Ihb2'. rewrite mult_plus_distr_r. simpl. rewrite <- succ_add. rewrite <- succ_add. rewrite add_r_0_firsttry. reflexivity.
+Qed.
