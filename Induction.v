@@ -15,6 +15,7 @@ Proof. intros n. induction n as [|n' Ihn'].
        - simpl. rewrite Ihn'. reflexivity.
 Qed.
 
+
 Theorem minus_n_n : forall n,
     minus n n = 0.
 Proof. intros n. induction n as [|n' Ihn'].
@@ -41,8 +42,14 @@ Proof. induction n as [|n' Ihn'].
        - simpl. intros m. rewrite add_r_0_secondtry. reflexivity.
        - simpl. intros m. rewrite Ihn'. rewrite succ_add. reflexivity.
 Qed.
-
-Theorem add_comm : forall n m p : nat,
+Theorem add_comm: forall n m : nat,
+    n + m = m + n.
+Proof.
+  induction m as [|m' Ihm'].
+  - rewrite add_r_0_firsttry. simpl. reflexivity.
+  - simpl. rewrite <- succ_add. rewrite Ihm'. reflexivity.
+Qed.
+Theorem add_assoc : forall n m p : nat,
     n + (m + p) = (n + m ) + p.
 Proof. induction p as [|p' Ihp'].
        - rewrite add_r_0_secondtry. rewrite add_r_0_secondtry. reflexivity.
@@ -62,8 +69,27 @@ Lemma double_plus : forall n, double n = n + n.
 Qed.
 
 Theorem even_S : forall n :nat,
-    even (S n) = negb' (even n).
+    even (S n) = Basics.negb (even n).
 Proof. induction n as [|n' Ihn'].
        - simpl. reflexivity.
-       - rewrite Ihn'. simpl. rewrite Basic.negation_fn_applied_twice. reflexivity.
+       - rewrite Ihn'. simpl. rewrite negation_fn_applied_twice.  reflexivity. intros x. reflexivity.
+Qed.
+
+(* Proof within proofs *)
+
+Theorem mult_0_plus' : forall n m : nat,
+    (n + 0 + 0) * m = n * m.
+Proof.
+  intros n m.
+  assert (H: n + 0 + 0 = n).
+  { rewrite add_r_0_secondtry. rewrite add_r_0_firsttry. reflexivity. }
+  rewrite -> H. reflexivity.
+Qed.
+
+Theorem plus_rearrange_firsttry: forall n m p q: nat,
+    (n+m) + (p+q) = (m +n ) + (p+q).
+Proof. intros n m p q.
+       assert (H: n+m = m+n).
+       { rewrite add_comm. reflexivity.}
+       rewrite H. reflexivity.
 Qed.
