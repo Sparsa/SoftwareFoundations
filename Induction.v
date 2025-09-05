@@ -164,3 +164,22 @@ Proof.
   - simpl. rewrite <- succ_add. rewrite add_r_0_firsttry. reflexivity.
   - simpl. rewrite succ_add. rewrite Ihb2'. rewrite mult_plus_distr_r. simpl. rewrite <- succ_add. rewrite <- succ_add. rewrite add_r_0_firsttry. reflexivity.
 Qed.
+
+Fixpoint nat_to_bin (n:nat) : Basics.bin :=
+  match n with
+    | O => z
+    | S n' => incr (nat_to_bin n')
+end.
+
+Compute nat_to_bin (S O).
+Lemma succ_nat_incr_bin : forall b : Basics.bin,
+   bin_to_nat ( incr b ) = S (bin_to_nat b ).
+Proof. intro b. induction b as [| b1' Ihb1 | b2' Ihb2'].
+       - simpl. reflexivity.
+       -
+
+Theorem nat_bin_nat : forall n: nat, (bin_to_nat(nat_to_bin   n) )= n.
+Proof. induction n as [| n' Ihn'].
+       - simpl. reflexivity.
+       - simpl. rewrite succ_nat_incr_bin. rewrite Ihn'. reflexivity.
+Qed.
