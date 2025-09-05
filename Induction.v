@@ -172,11 +172,17 @@ Fixpoint nat_to_bin (n:nat) : Basics.bin :=
 end.
 
 Compute nat_to_bin (S O).
+Lemma atimes_n: forall a n: nat, a * n + n = ( a + 1 )*n.
+Proof. intros a n. rewrite  mult_plus_distr_r. rewrite mult_1_1. reflexivity.
+Qed.
 Lemma succ_nat_incr_bin : forall b : Basics.bin,
    bin_to_nat ( incr b ) = S (bin_to_nat b ).
 Proof. intro b. induction b as [| b1' Ihb1 | b2' Ihb2'].
        - simpl. reflexivity.
-       -
+       - simpl. rewrite <- succ_add. rewrite add_r_0_firsttry. reflexivity.
+       - simpl. rewrite succ_add. rewrite Ihb2'. rewrite  <- succ_add. rewrite succ_add.
+             rewrite atimes_n.  rewrite <- succ_add. rewrite add_r_0_firsttry. reflexivity.
+Qed.
 
 Theorem nat_bin_nat : forall n: nat, (bin_to_nat(nat_to_bin   n) )= n.
 Proof. induction n as [| n' Ihn'].
