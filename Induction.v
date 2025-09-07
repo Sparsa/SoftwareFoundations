@@ -228,6 +228,12 @@ Fixpoint normalize (b: bin) : bin :=
 
 Example normalize_000: normalize (B0(B0(z))) = z.
 Proof. simpl. reflexivity. Qed.
+Lemma double_mul_2 : forall n: nat,
+    double n = n * 2.
+Proof. induction  n as [|n' Ihn'].
+       - simpl. reflexivity.
+       - simpl. rewrite Ihn'. reflexivity.
+Qed.
 Lemma add_twice_double: forall n:nat,
     n + n = double n.
 Proof. induction n as [|n' Ihn'].
