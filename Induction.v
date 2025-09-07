@@ -244,9 +244,18 @@ Lemma bin_to_nat_B0: forall b: bin,
     bin_to_nat (B0 b) = double (bin_to_nat (b)).
 Proof. simpl. induction b as [| b1' Ihb1' | b2' Ihb2'].
        - simpl. reflexivity.
-       - simpl. simpl add_assoc. rewrite add_r_0_firsttry. rewrite <- mult_plus_distr_r.
-Theorem bin_nat_bin : forall b , nat_to_bin (bin_to_nat b) = normalize b.
+       - simpl. simpl add_assoc. rewrite Ihb1'. rewrite <- double_mul_2. reflexivity.
+       - simpl. rewrite <- double_mul_2. reflexivity.
+Qed.
+Lemma double_to_double_bin: forall n: nat,
+    nat_to_bin (double n) = double_bin (nat_to_bin n).
+Proof. induction n as [|n' Ihn'].
+       - simpl. reflexivity.
+       - rewrite double_incr. simpl. rewrite Ihn'. rewrite double_incr_bin. reflexivity.
+Qed.
+
+  Theorem bin_nat_bin : forall b , nat_to_bin (bin_to_nat b) = normalize b.
 
 Proof. induction b as [| b1' Ihb1' | b2' Ihb2'].
        - simpl. reflexivity.
-       - destruct b1' .
+       - simpl. rewrite <- double_mul_2. rewrite double_to_double_bin. rewrite Ihb1'. rewrite <- double_incr_bin.
