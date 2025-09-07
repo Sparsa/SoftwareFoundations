@@ -770,7 +770,7 @@ Fixpoint incr (m:bin):bin:=
 Fixpoint bin_to_nat (m:bin) : Datatypes.nat :=
   match m with
     | z => O
-    | B1 (n' ) => bin_to_nat (n')*2 + 1
+    | B1 (n' ) => (bin_to_nat (n') *2 ) + 1
     | B0 (n' ) => bin_to_nat (n') * 2
   end.
 

@@ -189,3 +189,58 @@ Proof. induction n as [| n' Ihn'].
        - simpl. reflexivity.
        - simpl. rewrite succ_nat_incr_bin. rewrite Ihn'. reflexivity.
 Qed.
+
+Lemma double_incr : forall n : nat, double (S n) = S ( S (double n) ).
+
+Proof. simpl. reflexivity.
+Qed.
+
+Definition double_bin (b:bin) : bin :=
+  match b with
+      | z => z
+      | _ =>  B0 b
+  end.
+
+
+Example double_bin_zero : double_bin z = z.
+Proof. simpl. reflexivity.
+Qed.
+Lemma double_incr_bin : forall b:bin,
+    double_bin (incr b) = incr (incr (double_bin b)).
+Proof. induction b as [| b0' Ihb0' | b1' Ihb1'].
+       -  simpl. reflexivity.
+       - simpl. reflexivity.
+       - simpl. reflexivity.
+Qed.
+
+Theorem bin_nat_bin_fails: forall b, nat_to_bin (bin_to_nat b) = b.
+Proof. Abort.
+
+Fixpoint normalize (b: bin) : bin :=
+  match b with
+    | z => z
+    | B1 b' => B1 (normalize b')
+    | B0  b' => match (normalize b') with
+                | z => z
+                | bi => B0 bi
+              end
+    end.
+
+Example normalize_000: normalize (B0(B0(z))) = z.
+Proof. simpl. reflexivity. Qed.
+Lemma add_twice_double: forall n:nat,
+    n + n = double n.
+Proof. induction n as [|n' Ihn'].
+       - simpl.  reflexivity.
+       - rewrite <- succ_add. rewrite add_comm. rewrite <- succ_add. rewrite Ihn'. rewrite  double_incr. reflexivity.
+Qed.
+Lemma bin_to_nat_B0: forall b: bin,
+    bin_to_nat (B0 b) = double (bin_to_nat (b)).
+Proof. simpl. induction b as [| b1' Ihb1' | b2' Ihb2'].
+       - simpl. reflexivity.
+       - simpl. simpl add_assoc. rewrite add_r_0_firsttry. rewrite <- mult_plus_distr_r.
+Theorem bin_nat_bin : forall b , nat_to_bin (bin_to_nat b) = normalize b.
+
+Proof. induction b as [| b1' Ihb1' | b2' Ihb2'].
+       - simpl. reflexivity.
+       - destruct b1' .
