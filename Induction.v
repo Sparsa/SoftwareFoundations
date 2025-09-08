@@ -183,7 +183,12 @@ Proof. intro b. induction b as [| b1' Ihb1 | b2' Ihb2'].
        - simpl. rewrite succ_add. rewrite Ihb2'. rewrite  <- succ_add. rewrite succ_add.
              rewrite atimes_n.  rewrite <- succ_add. rewrite add_r_0_firsttry. reflexivity.
 Qed.
-
+Lemma incr_bin_succ_nat : forall n : nat,
+    nat_to_bin (S n) = incr  (nat_to_bin n).
+Proof. induction n as [|n' Ihn'].
+      - simpl. reflexivity.
+      - simpl. rewrite <- Ihn'. reflexivity.
+Qed.
 Theorem nat_bin_nat : forall n: nat, (bin_to_nat(nat_to_bin   n) )= n.
 Proof. induction n as [| n' Ihn'].
        - simpl. reflexivity.
@@ -254,8 +259,35 @@ Proof. induction n as [|n' Ihn'].
        - rewrite double_incr. simpl. rewrite Ihn'. rewrite double_incr_bin. reflexivity.
 Qed.
 
+Lemma double_to_double_bin_incr : forall n : nat,
+    nat_to_bin(double n + 1) = incr (double_bin (nat_to_bin n)).
+Proof. induction n as [|n' Ihn'].
+       - simpl. reflexivity.
+       - rewrite incr_bin_succ_nat. rewrite double_incr_bin. simpl. rewrite <- Ihn'. reflexivity.
+Qed.
+
+Lemma incr_double_bin_B1: forall b: bin,
+    incr (double_bin b) = B1 b.
+Proof. intro b. induction b as [|b1 Ihb1 | b2 Ihb2].
+       - simpl. reflexivity.
+       - simpl.  reflexivity.
+       - simpl. reflexivity.
+Qed.
+
   Theorem bin_nat_bin : forall b , nat_to_bin (bin_to_nat b) = normalize b.
 
 Proof. induction b as [| b1' Ihb1' | b2' Ihb2'].
        - simpl. reflexivity.
-       - simpl. rewrite <- double_mul_2. rewrite double_to_double_bin. rewrite Ihb1'. rewrite <- double_incr_bin.
+       - simpl. rewrite <- double_mul_2. rewrite double_to_double_bin. rewrite Ihb1'.
+        destruct (normalize b1').
+        {
+          - simpl. reflexivity.
+        }
+        {
+          - simpl. reflexivity.
+        }
+        {
+          - simpl. reflexivity.
+        }
+      - simpl. rewrite <- double_mul_2 . rewrite double_to_double_bin_incr. rewrite Ihb2'. rewrite incr_double_bin_B1. reflexivity.
+Qed.
