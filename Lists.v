@@ -62,3 +62,25 @@ Qed.
 Theorem fst_swap_is_snd : forall (p:natprod),
     fst (swap_pair p) = snd p.
 Proof. intros p. destruct p. simpl. reflexivity. Qed.
+
+Inductive natlist : Type :=
+  | nil
+  | cons (n : Datatypes.nat) (l : natlist).
+
+Definition mylist := cons 1 (cons 2 (cons 3 nil)).
+
+Notation "x :: l" := (cons x l)
+                      (at level 60, right associativity).
+(*atlevel 60 tells Coq how to parenthesize expressions that involve both :: and some other infix operator*)
+Notation "[ ]" := nil.
+Notation "[ x ; .. ; y ]" := (cons x .. (cons y nil) .. ).
+
+Definition mylist2 := 1 :: 2 :: 3 :: nil.
+Definition mylist1 := 1 :: (2 :: ( 3 :: nil )).
+Definition mylist3 := [1;2;3].
+
+Fixpoint repeat (n count : nat) : natlist :=
+  match count with
+    | O => nil
+    | S count' => n :: (repeat n count')
+  end.

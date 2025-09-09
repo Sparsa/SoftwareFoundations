@@ -90,7 +90,7 @@ Theorem plus_rearrange_firsttry: forall n m p q: nat,
     (n+m) + (p+q) = (m +n ) + (p+q).
 Proof. intros n m p q.
        assert (H: n+m = m+n).
-       { rewrite add_comm. reflexivity.}
+       { rewrite add_comm. reflexivity. }
        rewrite H. reflexivity.
 Qed.
 
