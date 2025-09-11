@@ -3,13 +3,15 @@ From LF Require Export Induction.
 Module NatList.
 
 Inductive natprod : Type :=
-| pair (n1 n2 : Datatypes.nat).
+| pair (n1 n2 : nat).
 
+Check 3.
+Check S (S ( S O )).
 
 Check (pair 3 5): natprod.
 
 
-Definition fst (p: natprod) : Datatypes.nat :=
+Definition fst (p: natprod) : nat :=
   match p with
     | pair x _ => x
   end.
@@ -65,7 +67,7 @@ Proof. intros p. destruct p. simpl. reflexivity. Qed.
 
 Inductive natlist : Type :=
   | nil
-  | cons (n : Datatypes.nat) (l : natlist).
+  | cons (n : nat) (l : natlist).
 
 Definition mylist := cons 1 (cons 2 (cons 3 nil)).
 
@@ -78,7 +80,7 @@ Notation "[ x ; .. ; y ]" := (cons x .. (cons y nil) .. ).
 Definition mylist2 := 1 :: 2 :: 3 :: nil.
 Definition mylist1 := 1 :: (2 :: ( 3 :: nil )).
 Definition mylist3 := [1;2;3].
-
+Check O.
 Fixpoint repeat (n count : nat) : natlist :=
   match count with
     | O => nil

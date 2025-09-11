@@ -124,7 +124,6 @@ Compute (all_zero (bits B0 B0 B0 B0)).
 End TuplePlayground.
 
 Module NatPlayground.
-
 Inductive nat: Type:=
   | O
   | S (n:nat).
@@ -145,7 +144,6 @@ Definition minustwo (n : nat) : nat :=
     | S O => O
     | S (S (n') ) => n'
   end.
-
 
 End NatPlayground.
 Fixpoint even (n:nat) : bool :=
@@ -473,16 +471,17 @@ Theorem andb_eq_orb :
     - rewrite and_var. rewrite or_true. intros H1. rewrite H1. reflexivity.
     - rewrite false_or. rewrite and_false. intros H1. rewrite H1. reflexivity.
   Qed.
-Inductive nat :=
+(*Inductive nat :=
   | Z
-  | S (n : nat).
-Definition one := S Z.
+  | S (n : nat). *)
+
+Definition one := S O.
 Definition two := S one.
 Definition three := S two.
 
 Fixpoint plus (a  b: nat) :=
   match a with
-    | Z => b
+    | O => b
     | S a' => S (plus a' b)
     end.
 Example one_plus_two:
@@ -493,13 +492,14 @@ Qed.
 
 Theorem n_plus_z:
   forall n,
-    plus n Z = n.
+    plus n O = n.
 
 Proof.
 intros n. induction n.
 - simpl. reflexivity.
 - simpl. rewrite IHn. reflexivity.
 Qed.
+
 Lemma succ_plus:
 forall a b,
    plus a (S b)=S (plus a b) .
@@ -520,6 +520,7 @@ Proof.
 Qed.
 
 Module LateDays.
+
 
 Inductive letter : Type :=
   | A | B | C | D | F.
