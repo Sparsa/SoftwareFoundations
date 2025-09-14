@@ -86,3 +86,63 @@ Fixpoint repeat (n count : nat) : natlist :=
     | O => nil
     | S count' => n :: (repeat n count')
   end.
+
+Fixpoint length (l:natlist) : nat :=
+  match l with
+    | nil => O
+    | h :: t => S (length t)
+  end.
+
+
+Fixpoint app (l1 l2 : natlist): natlist :=
+    match l1 with
+      | nil => l2
+      | h :: t => h :: (app t l2)
+end.
+
+Notation "x ++ y" := (app x y)
+                       (right associativity, at level 60).
+
+Example test_appl: [1;2;3] ++ [4;5] = [1;2;3;4;5].
+Proof. simpl. reflexivity. Qed.
+Example test_app2: nil ++ [4;5] = [4;5].
+Proof. simpl. reflexivity. Qed.
+Example test_app3: [1;2;3] ++ nil = [1;2;3].
+Proof. reflexivity. Qed.
+
+Definition hd (default : nat) (l: natlist) : nat :=
+  match l with
+    | nil => default
+    | h :: t => h
+  end.
+
+
+Definition tl  (l : natlist) : natlist :=
+  match l with
+    | nil => nil
+    | h :: t => t
+  end.
+
+Example test_hd1: hd 0 [1;2;3] = 1.
+Proof. reflexivity. Qed.
+Example test_hd2 : hd 0 [] = 0.
+Proof. reflexivity. Qed.
+
+Example test_t1 : tl [1;2;3] = [2;3].
+Proof. reflexivity. Qed.
+
+Fixpoint nonzeros (l:natlist) : natlist :=
+  match l with
+    | nil => nil
+    | 0 :: l' => nonzeros l'
+    | ll :: l' =>  ll:: (nonzeros l')
+  end.
+Example test_nonzeros:
+  nonzeros [0;1;0;2;3;0;0] = [1;2;3].
+Proof. simpl. reflexivity. Qed.
+
+Fixpoint oddmembers (l:natlist) : natlist :=
+  match l with
+    | nil => nil
+    | ll :: l' =>  if (even ll)  then ll:: (nonzeros l') else oddmembers
+  end.
