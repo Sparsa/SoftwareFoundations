@@ -193,7 +193,10 @@ Definition bag := natlist.
 Fixpoint count (v :nat ) (s: bag) : nat :=
   match s with
     | nil => O
-    | l:: ll => if (eqb l v) then S (count v ll) else count v ll
+    | l:: ll => match (eqb l v) with
+                 | true =>  S (count v ll)
+                 | false => count v ll
+              end
   end.
 Example test_count1 : count 1 [1;2;3;1;4;1] = 3.
 Proof. simpl. reflexivity. Qed.
@@ -250,4 +253,70 @@ Example test_remove_one4:
   count 5 (remove_one 5 [2;1;5;4;5;1;4]) = 1.
 Proof. simpl. reflexivity. Qed.
 
-Fixpoint included (s1 : bag) (s2:bag) bool :=
+Fixpoint remove_all (v: nat)   (s:bag) : bag  :=
+  match s with
+    | nil => nil
+    | l :: ll => if (eqb v l) then (remove_all v ll) else l:: (remove_all v  ll)
+ end.
+
+Example test_remove_all1:
+  count 5 (remove_all 5 [2;1;5;4;1]) = 0.
+Proof. simpl.  reflexivity. Qed.
+
+Example test_remove_all2:
+  count 5 (remove_all 5 [2;1;4;1])= 0.
+Proof. simpl. reflexivity. Qed.
+
+Example test_remove_all3:
+  count 4 (remove_all 5 [2;1;4;5;1;4]) = 2.
+Proof. simpl. reflexivity. Qed.
+
+Example test_remove_all4:
+  count 5 (remove_all 5 [ 2;1;5;4;5;1;4;5;1;4 ]) = 0.
+Proof. simpl. reflexivity. Qed.
+
+
+Fixpoint included (s1:bag) (s2:bag): bool:=
+  match s1 with
+    | nil => true
+    | l :: ll => if (member l s2) then (included ll (remove_one l s2)) else false
+ end.
+
+Example test_included1: included [1;2] [2;1;4;1] = true.
+Proof. simpl. reflexivity. Qed.
+Example test_included2 : included [1;2;2] [2;1;4;1] = false.
+Proof. simpl. reflexivity. Qed.
+
+Lemma eqb_refl : forall n : nat ,
+    (eqb n n )  = true.
+Proof. induction n as [|n' ihn'].
+       - simpl. reflexivity.
+       - simpl. rewrite ihn'. reflexivity.
+Qed.
+
+
+Theorem add_inc_count: forall n: nat, forall l : bag,
+    count n (add n l) = S (count n l).
+Proof. intros n l. simpl. rewrite eqb_refl. reflexivity.
+       Qed.
+
+
+Definition manual_grade_for_add_inc_count : option (nat * string) := None.
+
+Theorem nil_app : forall l : natlist,
+    [] ++ l = l.
+Proof. reflexivity. Qed.
+
+Theorem tl_length_pred : forall l : natlist,
+    pred (length l) = length (tl l).
+Proof.
+  intros l. destruct l as [| n l'].
+  - reflexivity.
+  - reflexivity. Qed.
+
+Theorem app_asoc: forall l1 l2 l3 : natlist,
+    (l1 ++ l2 ) ++ l3  = l1 ++ (l2 ++ l3).
+Proof. intros l1 l2 l3. induction l1 as [| n l1' Ihl1'].
+       - simpl. reflexivity.
+       - simpl. rewrite Ihl1'. reflexivity.
+Qed.
