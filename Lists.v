@@ -320,3 +320,13 @@ Proof. intros l1 l2 l3. induction l1 as [| n l1' Ihl1'].
        - simpl. reflexivity.
        - simpl. rewrite Ihl1'. reflexivity.
 Qed.
+
+Theorem repeat_plus : forall c1 c2 n : nat,
+    repeat n c1 ++ repeat n c2 = repeat n (c1 + c2).
+Proof. intros c1 c2 n.
+       induction c1 as [|c1' Ihc1'].
+       - simpl.  reflexivity.
+       - simpl.
+         rewrite <- Ihc1'.
+         reflexivity.
+      Qed.
