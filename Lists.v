@@ -330,3 +330,69 @@ Proof. intros c1 c2 n.
          rewrite <- Ihc1'.
          reflexivity.
       Qed.
+
+Fixpoint rev (l:natlist) : natlist :=
+  match l with
+    | nil => nil
+    | h :: t => rev t ++ [h]
+  end.
+
+Example test_rev1 : rev [1;2;3] = [3;2;1].
+Proof. reflexivity. Qed.
+
+Example test_rev2 : rev nil = nil.
+Proof. reflexivity. Qed.
+
+
+Theorem rev_length_firsttry : forall l : natlist,
+    length (rev l) = length l.
+Proof. intros l.
+       induction l as [| n l' Ihl'].
+       - reflexivity.
+       - simpl. rewrite <- Ihl'. Abort.
+
+Theorem app_length_S: forall l n,
+    length (l++ [n]) = S (length l).
+Proof. intros l n.
+       induction l as [| n' l' Ihl'].
+       - simpl. reflexivity.
+       - simpl. rewrite <- Ihl'. reflexivity.
+Qed.
+
+
+Theorem ref_length : forall l : natlist,
+    length (rev l) = length l.
+
+Proof. intros l. induction l as [| n' l' Ihl'].
+       -  simpl. reflexivity.
+       - simpl. rewrite -> app_length_S. rewrite -> Ihl'. reflexivity. Qed.
+
+Theorem app_length : forall l1 l2 : natlist,
+    length (l1 ++ l2) = (length l1) + (length l2).
+Proof.
+  intros l1 l2. induction l1 as [| n' l' Ihl'].
+  - simpl. reflexivity.
+  - simpl. rewrite <- Ihl'. reflexivity. Qed.
+
+Search rev.
+Search (_ + _ = _ + _).
+Search (_ = _) .
+Search (_ + _ = _ + _) inside Induction.
+Search (?x + ?y = ?y + ?x).
+
+Theorem app_nil_r : forall l : natlist,
+    l ++ [] = l.
+  Proof.
+    induction l as [|n' l' Ihl'].
+    - simpl. reflexivity.
+    - simpl. rewrite -> Ihl'. reflexivity. Qed.
+
+Search (_ ++ _ ++ _ = _ ++ _ ++ _).
+
+Theorem rev_app_distr: forall l1 l2 : natlist,
+    rev (l1 ++ l2) = rev l2 ++ rev l1.
+
+Proof. intros l1 l2.
+       induction l1 as [|n' l' ihl'].
+       - simpl. rewrite app_nil_r. reflexivity.
+       - simpl. rewrite -> ihl'.  rewrite <- app_asoc. reflexivity. Qed.
