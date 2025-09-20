@@ -418,5 +418,45 @@ Theorem rev_involutive : forall l : natlist,
     rev (rev l) = l.
 Proof. intros l. induction l as [| n' l' Ihl'].
        - simpl. reflexivity.
-       - rewrite rev_left.  rewrite rev_list_assoc. rewrite Ihl'. simpl.  reflexivity.
+       - rewrite rev_left.  rewrite rev_app_distr. rewrite Ihl'. simpl.  reflexivity.
+Qed.
+
+Theorem app_assoc4 : forall l1 l2 l3 l4 : natlist,
+    l1 ++ (l2 ++ (l3 ++ l4)) = ((l1 ++ l2) ++ l3) ++ l4.
+Proof. intros l1 l2 l3 l4. rewrite app_asoc. rewrite app_asoc. reflexivity.
+       Qed.
+
+Theorem nonzero_app: forall l1 l2 : natlist,
+    nonzeros (l1++l2) = (nonzeros l1) ++ (nonzeros l2).
+Proof. intros l1 l2. induction l1 as [|n' l1' Ihl1].
+       - simpl. reflexivity.
+       - destruct n'.
+         + simpl. rewrite Ihl1. reflexivity.
+         + simpl. rewrite Ihl1. reflexivity.
+Qed.
+
+Fixpoint eqblist (l1 l2 : natlist) :bool :=
+        match l1,l2 with
+              | nil,nil => true
+              | nil,_ => false
+              | _, nil => false
+              | l'::ll', l''::ll'' => if (eqb l' l'') then (eqblist ll' ll'') else false
+       end.
+
+Example test_eqblist1 :
+  (eqblist nil nil) = true.
+Proof. simpl. reflexivity. Qed.
+
+Example test_eqblist2:
+  eqblist [1;2;3] [1;2;3] = true.
+Proof. simpl. reflexivity. Qed.
+
+Example test_eqblist3:
+  eqblist [1;2;3] [1;2;4] = false.
+Proof. simpl. reflexivity. Qed.
+Theorem eqblist_refl : forall l : natlist,
+    true = eqblist l l.
+Proof. intros l. induction l as [| n' l' Ihl'].
+       - simpl. reflexivity.
+       - simpl. rewrite eqb_refl. rewrite Ihl'. reflexivity.
 Qed.
