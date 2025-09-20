@@ -387,6 +387,8 @@ Theorem app_nil_r : forall l : natlist,
     - simpl. reflexivity.
     - simpl. rewrite -> Ihl'. reflexivity. Qed.
 
+
+
 Search (_ ++ _ ++ _ = _ ++ _ ++ _).
 
 Theorem rev_app_distr: forall l1 l2 : natlist,
@@ -396,3 +398,25 @@ Proof. intros l1 l2.
        induction l1 as [|n' l' ihl'].
        - simpl. rewrite app_nil_r. reflexivity.
        - simpl. rewrite -> ihl'.  rewrite <- app_asoc. reflexivity. Qed.
+
+Theorem rev_left : forall l : natlist, forall n : nat ,
+    rev (n::l) = rev(l) ++ [n].
+Proof. intros l.  induction l as [|n' l' Ih'].
+       - simpl. reflexivity.
+       - simpl. rewrite <- Ih'. reflexivity.
+Qed.
+
+Theorem rev_list_assoc : forall l1 l2 :natlist,
+    rev(l1 ++ l2) = rev(l2) ++ rev(l1).
+Proof. intros l1 l2. induction l1 as [|n' l' Ihl'].
+       - simpl. rewrite app_nil_r. reflexivity.
+       - simpl. rewrite Ihl'. rewrite app_asoc. reflexivity.
+Qed.
+
+
+Theorem rev_involutive : forall l : natlist,
+    rev (rev l) = l.
+Proof. intros l. induction l as [| n' l' Ihl'].
+       - simpl. reflexivity.
+       - rewrite rev_left.  rewrite rev_list_assoc. rewrite Ihl'. simpl.  reflexivity.
+Qed.
