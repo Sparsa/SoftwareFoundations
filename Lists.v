@@ -460,3 +460,42 @@ Proof. intros l. induction l as [| n' l' Ihl'].
        - simpl. reflexivity.
        - simpl. rewrite eqb_refl. rewrite Ihl'. reflexivity.
 Qed.
+
+Theorem count_member_nonzero : forall (s : bag),
+    1 <=? (count 1 (1::s)) = true.
+Proof. intros s. simpl. reflexivity. Qed.
+
+
+Theorem leb_n_Sn : forall n,
+    n <=? (S n) = true.
+Proof. intros n. induction n as [| n' Ihn'].
+       - simpl. reflexivity.
+       - simpl. rewrite Ihn'. reflexivity. Qed.
+
+Theorem remove_doest_not_increase_count: forall (s:bag),
+    (count 0 (remove_one 0 s)) <=? (count 0 s) = true.
+
+Proof. intros s. induction s as [| n' l' Ihl'].
+       - simpl. reflexivity.
+       - destruct n'.
+         + simpl. rewrite leb_n_Sn. reflexivity.
+         + simpl. rewrite Ihl'. reflexivity.
+      Qed.
+
+Lemma sum_empty : forall s : bag,
+    sum [] s = s.
+Proof. simpl. destruct s.
+       - reflexivity.
+       - reflexivity.
+Qed.
+Theorem bag_count_sum : forall s1 s2:bag, forall n : nat,
+    (count n s1) + (count n s2)   = count n (sum s1 s2).
+Proof. intros s1. intros s2. intros n.
+       induction s1 as [| n' l' Ihl'].
+       - rewrite sum_empty. simpl. reflexivity.
+       - simpl. destruct s2.
+         + simpl. destruct (n=? n').
+          {
+            - destruct (n' =? n). simpl. rewrite add_r_0_firstry.
+
+          }
