@@ -488,14 +488,41 @@ Proof. simpl. destruct s.
        - reflexivity.
        - reflexivity.
 Qed.
+
+Lemma sum_empty_right : forall s : bag,
+    sum s [] = s.
+Proof. simpl. destruct s.
+       - reflexivity.
+       - reflexivity.
+Qed.
+
+Lemma sum_single_list : forall s : bag, forall n: nat,
+    sum [n] s = n::s.
+Proof. intros s. intros n. induction s as [|n' l' Ihl'].
+       -  rewrite sum_empty_right. reflexivity.
+       - simpl. destruct l'.
+         + reflexivity.
+         + reflexivity.
+      Qed.
+Lemma sum_one_el : forall s1 s2 : bag, forall n : nat,
+    sum s1 (n::s2) =  s1.
+Proof. Admitted.
+
+Lemma sum_first_element : forall s1 s2 : bag, forall n : nat,
+    sum (n::s1) s2 = n :: (sum s1 s2).
+Proof.
+  intros s1. intros s2. intros n. induction s2 as [| n' l' Ihl'].
+  - rewrite sum_empty_right. rewrite sum_empty_right. reflexivity.
+  - simpl. induction s1 as [|m' ll' Ihll].
+    + rewrite sum_empty. rewrite sum_empty. reflexivity.
+  Admitted.
+
 Theorem bag_count_sum : forall s1 s2:bag, forall n : nat,
     (count n s1) + (count n s2)   = count n (sum s1 s2).
 Proof. intros s1. intros s2. intros n.
        induction s1 as [| n' l' Ihl'].
        - rewrite sum_empty. simpl. reflexivity.
-       - simpl. destruct s2.
-         + simpl. destruct (n=? n').
-          {
-            - destruct (n' =? n). simpl. rewrite add_r_0_firstry.
-
-          }
+       - rewrite sum_first_element. simpl. destruct (n' =? n).
+         + simpl.rewrite Ihl'. reflexivity.
+         + simpl. rewrite Ihl'. reflexivity.
+Qed.
