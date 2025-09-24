@@ -531,3 +531,9 @@ Theorem involution_injective : forall (f : nat -> nat) ,
 Proof. intros f. intros n. intros n1 n2. intros hypo. rewrite n with n1. rewrite n with n2.
        rewrite hypo. reflexivity.
 Qed.
+
+Theorem rev_injective : forall (l1 l2 : natlist),
+    rev l1 = rev l2 -> l1 = l2.
+Proof. intros l1. intros l2.
+       intros hypo. rewrite <- rev_involutive. rewrite <- hypo. rewrite rev_involutive. reflexivity.
+Qed.
