@@ -205,7 +205,7 @@ Example test_count2 : count 6 [1;2;3;1;4;1] = 0.
 Proof. simpl. reflexivity. Qed.
 
 Definition sum  (l1 l2 : bag) : bag :=
-  alternate l1 l2 .
+   l1 ++ l2 .
 Example test_sum1: count 1 (sum [1;2;3] [1;4;1]) = 3.
 Proof. simpl. reflexivity. Qed.
 
@@ -491,10 +491,12 @@ Qed.
 
 Lemma sum_empty_right : forall s : bag,
     sum s [] = s.
-Proof. simpl. destruct s.
+Proof. simpl. induction s as [|n h ih].
        - reflexivity.
-       - reflexivity.
+       - simpl. rewrite ih. reflexivity.
 Qed.
+
+
 
 Lemma sum_single_list : forall s : bag, forall n: nat,
     sum [n] s = n::s.
@@ -504,18 +506,15 @@ Proof. intros s. intros n. induction s as [|n' l' Ihl'].
          + reflexivity.
          + reflexivity.
       Qed.
-Lemma sum_one_el : forall s1 s2 : bag, forall n : nat,
-    sum s1 (n::s2) =  s1.
-Proof. Admitted.
-
 Lemma sum_first_element : forall s1 s2 : bag, forall n : nat,
     sum (n::s1) s2 = n :: (sum s1 s2).
 Proof.
   intros s1. intros s2. intros n. induction s2 as [| n' l' Ihl'].
   - rewrite sum_empty_right. rewrite sum_empty_right. reflexivity.
   - simpl. induction s1 as [|m' ll' Ihll].
-    + rewrite sum_empty. rewrite sum_empty. reflexivity.
-  Admitted.
+    + rewrite sum_empty. reflexivity.
+    + reflexivity.
+Qed.
 
 Theorem bag_count_sum : forall s1 s2:bag, forall n : nat,
     (count n s1) + (count n s2)   = count n (sum s1 s2).
@@ -523,6 +522,6 @@ Proof. intros s1. intros s2. intros n.
        induction s1 as [| n' l' Ihl'].
        - rewrite sum_empty. simpl. reflexivity.
        - rewrite sum_first_element. simpl. destruct (n' =? n).
-         + simpl.rewrite Ihl'. reflexivity.
+         + simpl. rewrite Ihl'. reflexivity.
          + simpl. rewrite Ihl'. reflexivity.
 Qed.
