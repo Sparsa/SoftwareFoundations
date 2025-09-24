@@ -525,3 +525,9 @@ Proof. intros s1. intros s2. intros n.
          + simpl. rewrite Ihl'. reflexivity.
          + simpl. rewrite Ihl'. reflexivity.
 Qed.
+
+Theorem involution_injective : forall (f : nat -> nat) ,
+    (forall n : nat, n = f ( f n )) -> forall n1 n2 : nat, f n1 = f n2 -> n1 = n2.
+Proof. intros f. intros n. intros n1 n2. intros hypo. rewrite n with n1. rewrite n with n2.
+       rewrite hypo. reflexivity.
+Qed.
