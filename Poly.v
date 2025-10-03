@@ -125,3 +125,14 @@ Example test_length1 :  length (cons 1 (cons 2 (cons 3 nil))) = 3.
 Proof. simpl. reflexivity. Qed.
 
 Fail Definition mynil := nil.
+
+Definition mynil : list nat := nil.
+
+Check @nil : forall X : Type, list X.
+
+Definition mynil' := @nil nat.
+
+Notation " x :: y " := (cons x y)
+                        (at level 60, right associativity).
+Notation "[ ]" := nil.
+Notation "[x ; ..; y]" := (cons x .. (cons y []) ..).
