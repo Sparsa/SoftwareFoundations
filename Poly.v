@@ -135,4 +135,4 @@ Definition mynil' := @nil nat.
 Notation " x :: y " := (cons x y)
                         (at level 60, right associativity).
 Notation "[ ]" := nil.
-Notation "[x ; ..; y]" := (cons x .. (cons y []) ..).
+Notation "[ x ; .. ; y ]" := (cons x .. (cons y []) ..).
