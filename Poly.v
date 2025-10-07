@@ -136,3 +136,45 @@ Notation " x :: y " := (cons x y)
                         (at level 60, right associativity).
 Notation "[ ]" := nil.
 Notation "[ x ; .. ; y ]" := (cons x .. (cons y []) ..).
+Notation "x ++ y" := (app x y)
+                       (at level 60, right associativity).
+
+Definition list123''' := [1;2;3].
+Theorem app_nil_r : forall (X:Type), forall l:list X,
+    l ++ [] = l.
+Proof. intros X. induction l as [| l' Ihl'].
+       - simpl. reflexivity.
+       - simpl. rewrite IHIhl'. reflexivity.
+Qed.
+
+Theorem app_assoc : forall A (l m n : list A),
+    l ++ m ++ n = (l ++ m ) ++ n.
+Proof. intros A. intros l m n. induction l as [| l' Ihl'].
+      - simpl. reflexivity.
+      - simpl. rewrite IHIhl'. reflexivity.
+Qed.
+
+Lemma app_length: forall (X:Type) (l1 l2 : list X),
+    length (l1 ++ l2 ) = length l1 + length l2.
+Proof.
+  intros X. intros l1 l2.
+  induction l1 as [|n1 l1' Ihl1'].
+  - simpl. reflexivity.
+  - simpl. rewrite Ihl1'. reflexivity.
+Qed.
+
+Theorem rev_app_distr: forall X (l1 l2 : list X),
+    rev (l1 ++ l2) = rev l2 ++ rev l1.
+Proof. intros X. intros l1 l2. induction l1 as  [|n l1' Ihl1'].
+       - simpl. rewrite app_nil_r. reflexivity.
+       - simpl. rewrite Ihl1'. rewrite app_assoc. reflexivity.
+Qed.
+
+Theorem rev_involutive : forall X : Type, forall l : list X,
+    rev (rev l) = l.
+Proof. intros X. intros l. induction l as [|n l' Ihl'].
+       - simpl. reflexivity.
+       - simpl. rewrite rev_app_distr. rewrite Ihl'. simpl. reflexivity.
+Qed.
+(*Polymorpic Pairs*))
+
