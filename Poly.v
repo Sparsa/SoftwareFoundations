@@ -176,5 +176,135 @@ Proof. intros X. intros l. induction l as [|n l' Ihl'].
        - simpl. reflexivity.
        - simpl. rewrite rev_app_distr. rewrite Ihl'. simpl. reflexivity.
 Qed.
-(*Polymorpic Pairs*))
+(*Polymorpic Pairs*)
 
+Inductive prod (X Y : Type) : Type :=
+  | pair (x : X) (y : Y) .
+
+Arguments pair {X} {Y}. (* this is how you give the arguments *)
+
+Notation "( x , y )" := (pair x y).
+
+Notation " X * Y " := (prod X Y): type_scope.
+
+(* type notation tells coq that this abbreviation should only be used when parsing types not when parsing expressions *)
+
+
+Definition fst {X Y : Type} (p : X * Y):  X:=
+  match p with
+    | (x, y) => x
+  end.
+
+Definition snd {X Y :Type} (p : X * Y) : Y :=
+  match p with
+    | (x,y) => y
+  end.
+
+Fixpoint combine {X Y: Type} (lx : list X) (ly : list Y)
+                 : list (X * Y) :=
+  match lx, ly with
+    | [] , _ => []
+    | _ , [] => []
+    | x :: tx, y :: ty => (x,y):: (combine tx ty)
+end.
+
+Check @combine.
+Compute (combine [1;2] [false;false;true;true]).
+
+Fixpoint split {X Y: Type} (l : list (X*Y)) : (list X) * (list Y) :=
+  match l with
+    | [] => ([],[])
+    | (x,y)::ls => (x:: (fst (split ls)), y::(snd (split ls)))
+  end.
+Example test_split:
+  split [(1,false);(2,false)] = ([1;2],[false;false]).
+Proof. simpl. reflexivity. Qed.
+
+(*polymorhpic options*)
+
+Module OptionPlayground.
+
+Inductive option (X:Type) : Type :=
+  | Some (x:X)
+  | None.
+
+Arguments Some {X}.
+Arguments None {X}.
+
+End OptionPlayground.
+
+Fixpoint nth_error {X:Type} (l : list X) (n:nat)
+                   : option X:=
+  match l with
+    | nil => None
+    | a :: l' => match n with
+                 | 0 => Some a
+                 | S n' => nth_error l' n'
+              end
+  end.
+
+Example test_nth_error1 : nth_error [4;5;6;7] 0 = Some 4.
+Proof. simpl. reflexivity. Qed.
+
+Example test_nth_error2 : nth_error [[1];[2]] 1 = Some [2].
+Proof. simpl. reflexivity. Qed.
+
+Example test_nth_error3 : nth_error [true] 2 = None.
+Proof. simpl. reflexivity. Qed.
+
+
+Definition hd_error {X : Type} (l : list X) : option X :=
+  match l with
+    | [] => None
+    | n :: ln => Some n
+  end.
+
+Check @hd_error : forall X : Type, list X -> option X.
+Example test_hd_error1 : hd_error [1;2]  = Some 1.
+Proof. simpl. reflexivity. Qed.
+
+Example test_hd_error2 : hd_error [[1]; [2]] = Some [1].
+Proof. simpl. reflexivity. Qed.
+
+(* functions as data *)
+
+Definition doit3times {X: Type} (f : X -> X) (n: X) : X :=
+  f (f (f n)).
+
+Check @doit3times: forall X: Type, (X -> X) -> X -> X.
+
+Definition minustwo (n: nat) : nat :=
+  n - 2.
+Compute minustwo 5.
+Example test_doit3times: doit3times minustwo 9 = 3.
+Proof. simpl. reflexivity. Qed.
+Example test_doit3times': doit3times negb true = false.
+Proof. simpl. reflexivity. Qed.
+
+(*Filter*)
+Fixpoint filter {X:Type} (test: X->bool) (l:list X) :=
+  match l with
+    | [] => []
+    | h :: t =>
+        if test h then h :: (filter test t)
+        else filter test t
+  end.
+
+Example test_filter1 : filter even [1;2;3;4] = [2;4].
+Proof. simpl. reflexivity. Qed.
+
+Definition length_is_1 {X: Type} (l : list X) : bool :=
+  (length l ) =? 1.
+Example test_fileter2:
+  filter length_is_1 [[1;2]; [3]; [4]; [5;6;7]; []; [8]] = [ [3 ] ; [4] ;[8]].
+Proof. simpl. reflexivity. Qed.
+
+Definition countoddmembers' (l:list nat) : nat :=
+  length (filter odd l).
+
+Example test_countoddmembers'1 : countoddmembers' [1;0;3;1;4;5] = 4.
+Proof. simpl. reflexivity. Qed.
+Example test_countoddmembers'2 : countoddmembers' [0;2;4] = 0.
+Proof. simpl. reflexivity. Qed.
+Example test_countoddmembers'3 : countoddmembers' nil = 0.
+Proof. simpl. reflexivity. Qed.
