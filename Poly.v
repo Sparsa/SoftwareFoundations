@@ -308,3 +308,53 @@ Example test_countoddmembers'2 : countoddmembers' [0;2;4] = 0.
 Proof. simpl. reflexivity. Qed.
 Example test_countoddmembers'3 : countoddmembers' nil = 0.
 Proof. simpl. reflexivity. Qed.
+
+(* Annymous functions *)
+Example test_anon_fun':
+  doit3times (fun n => n * n) 2 = 256.
+Proof. simpl. reflexivity. Qed.
+
+Example test_filter2':
+  filter (fun l => (length l) =? 1) [[1;2];[3];[4];[5;6;7];[];[8]] = [ [3];[4];[8] ].
+Proof. reflexivity. Qed.
+Compute  gt  7 2.
+Definition filter_even_gt7 (l: list nat) : list nat :=
+  filter (fun l => (even l) && ( ltb 7 l)) l.
+
+Example test_filter_even_gt7_1 :
+  filter_even_gt7 [1;2;6;9;10;3;12;8] = [10;12;8].
+Proof. reflexivity. Qed.
+Example test_filter_even_gt7_2 :
+  filter_even_gt7 [5;2;6;19;129] = [].
+Proof. reflexivity. Qed.
+
+Definition partition  {X:Type} (f : X -> bool)  (lx : list X) : (list X * list X) :=
+  (filter f lx, filter (fun x => negb (f x)) lx). 
+Example test_partition1: partition odd [1;2;3;4;5] = ([1;3;5],[2;4]).
+Proof. reflexivity. Qed.
+Example test_partition2: partition (fun x => false) [5;9;0] = ([], [5;9;0]).
+Proof. reflexivity. Qed.
+
+Fixpoint map {X Y : Type} (f : X -> Y) (l : list X) : list Y :=
+  match l with
+    | [] => []
+    | h :: t => (f h ) :: (map f t)
+  end.
+
+Example test_map1 : map (fun x => plus 3 x) [2;0;2] = [5;3;5].
+Proof. simpl. reflexivity. Qed.
+
+Example test_map2 : map odd [2;1;2;5] = [false ; true; false; true].
+Proof. simpl. reflexivity. Qed.
+
+Lemma map_distr : forall (X Y : Type) (f : X -> Y) (l1 l2 : list X),
+    map f (l1 ++ l2) = map f l1 ++ map f l2.
+Proof. intros X Y. intros f. intros l1 l2. induction l1 as [|n l' Ihl'].
+       - simpl. reflexivity.
+       - simpl. rewrite Ihl'. reflexivity. Qed.
+
+Theorem map_rev : forall (X Y : Type) (f : X -> Y) (l: list X),
+    map f (rev l) = rev (map f l).
+Proof. intros X Y. induction l as [| n l' Ihl].
+       - simpl. reflexivity.
+       - simpl. rewrite <- Ihl. rewrite map_distr. simpl. reflexivity. Qed. 
