@@ -358,3 +358,27 @@ Theorem map_rev : forall (X Y : Type) (f : X -> Y) (l: list X),
 Proof. intros X Y. induction l as [| n l' Ihl].
        - simpl. reflexivity.
        - simpl. rewrite <- Ihl. rewrite map_distr. simpl. reflexivity. Qed. 
+
+Fixpoint flat_map {X Y : Type} (f : X -> list Y) (l: list X) : list Y :=
+  match l with
+    | [] => []
+    | x::lx => (f x) ++ (flat_map f lx)
+  end.
+
+Example test_flat_map1:
+  flat_map (fun n => [n;n;n]) [1;5;4]
+           = [1;1;1;5;5;5;4;4;4].
+Proof. reflexivity. Qed.
+
+Definition option_map {X Y : Type} ( f : X -> Y ) (xo : option X) : option Y :=
+  match xo with
+    | None => None
+    | Some x => Some (f x)
+  end.
+
+Fixpoint fold {X Y : Type} (f : X -> Y -> Y) (l : list X) ( b: Y)
+              : Y :=
+  match l with
+    | nil => b
+    | h :: t => f h (fold f t b)
+  end.
