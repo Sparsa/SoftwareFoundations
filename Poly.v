@@ -382,3 +382,194 @@ Fixpoint fold {X Y : Type} (f : X -> Y -> Y) (l : list X) ( b: Y)
     | nil => b
     | h :: t => f h (fold f t b)
   end.
+
+Check (fold andb) : list bool -> bool -> bool.
+
+Example fold_example1 :
+  fold andb [true;true;false;true] true = false.
+Proof. simpl. reflexivity. Qed.
+
+Example fold_example2:
+  fold mult [1;2;3;4] 1 = 24.
+Proof. simpl. reflexivity. Qed.
+
+Example fold_example3 :
+  fold app [[1];[];[2;3];[4]] [] = [ 1;2;3;4 ].
+Proof. simpl. reflexivity. Qed.
+
+Example fold_example4 :
+  fold (fun l n => length l + n ) [[1];[];[2;3;2];[4]] 0 = 5.
+Proof. reflexivity. Qed.
+
+Compute even 4.
+Compute fold (fun l n => (orb (even l) n ))  [1;2;3;5] false.
+Example fold_example_one_even:
+  fold (fun l n => (orb (even l) n ))  [1;2;3;5] false = true.
+Proof. reflexivity. Qed.
+
+Definition constfun {X:Type} (x:X) : nat -> X :=
+  fun (k:nat) => x.
+Definition ftrue := constfun true.
+
+Example constfun_example1: ftrue 0 = true.
+Proof. simpl. reflexivity. Qed.
+
+Example constfun_example2 : (constfun 5) 99 = 5.
+Proof. simpl. reflexivity.  Qed.
+
+Check plus : nat -> nat -> nat.
+
+Definition plus3 := plus 3.
+Check plus3: nat -> nat.
+
+Example test_plus3 : plus3 4 = 7.
+Proof. reflexivity. Qed.
+
+Example test_plus3' : doit3times plus3 0 = 9.
+Proof. reflexivity. Qed.
+
+Example test_plus3'' : doit3times (plus 3) 0 = 9.
+Proof. reflexivity. Qed.
+
+Module Exercises.
+
+  Definition fold_length {X:Type} (l:list X) : nat :=
+    fold (fun _ n => S n) l 0.
+  Example test_fold_length1: fold_length [4;7;0] = 3.
+  Proof. reflexivity. Qed.
+
+  Lemma fold_length_sum : forall X (l: list X) (n:X),
+      fold_length(n::l) = S (fold_length l).
+    Proof. intros X. intros l. intros n.
+           unfold fold_length. simpl. reflexivity. Qed.
+  Theorem fold_length_correct : forall X (l:list X),
+      fold_length l = length l.
+  Proof. intros X. intros l. induction l as [|n l' Ihl'].
+         - simpl. reflexivity.
+         - simpl. rewrite fold_length_sum. rewrite Ihl'. reflexivity. Qed. 
+  Definition fold_map {X Y :Type} ( f : X -> Y ) (l: list X) : list Y :=
+    fold (fun a b => (f a) :: b) l [].
+  Lemma foldmap_one : forall {X Y : Type} (f : X -> Y) (l: list X) (n: X),
+      fold_map f (n::l) = (f n) :: (fold_map f l).
+  Proof. intros X Y f. intros l. intros n. induction l as [| x l' Ihl'].
+         - reflexivity.
+         - reflexivity. Qed. 
+  Theorem fold_map_correct : forall {X Y : Type} (f : X -> Y) (l:list X),
+      fold_map f l = map f l.
+    Proof. intros X Y. intros f. intros l.
+           induction l as [|n l' Ihl'].
+           - reflexivity.
+           - simpl. rewrite foldmap_one. rewrite Ihl'. reflexivity. Qed.
+    
+Definition manual_grade_for_fold_map : option (nat * string) := None.
+
+                                                       
+Definition prod_curry {X Y Z : Type}
+                      (f : X * Y -> Z) (x : X) (y: Y) : Z := f (x, y).
+Definition prod_uncurry {X Y Z : Type}
+                        (f : X -> Y -> Z) ( p : X * Y ) : Z :=
+  f (fst p) (snd p).
+
+Example test_map1': map (plus 3) [2;0;2] = [5;3;5].
+Proof. reflexivity. Qed.
+
+Check @prod_curry.
+Check @prod_uncurry.
+
+Theorem uncurry_curry : forall (X Y Z : Type)
+                          (f : X -> Y -> Z)
+                          x y,
+    prod_curry (prod_uncurry f) x y = f x y.
+  Proof. intros X Y Z f x y. reflexivity. Qed.
+
+Theorem curry_uncurry : forall (X Y Z : Type)
+                          (f : (X * Y) -> Z) ( p: X * Y ),
+    prod_uncurry (prod_curry f) p = f p.
+  Proof. intros X Y Z f p. destruct p. 
+         - reflexivity. Qed.
+  Theorem nth_error_informal: forall (X : Type)
+                                (l : list X)
+                                (n : nat),
+      length l = n -> @nth_error X l n = None.
+  Proof. intros X l n. intros H. induction l as [| x l' Ihl'].
+         - reflexivity.
+         - rewrite <- H. simpl in H.  Admitted.                     
+
+(* Church neumerals *)
+
+  Module Church.
+
+  Definition cnat := forall X : Type, (X -> X) -> X -> X.
+
+  Definition one : cnat :=
+    fun (X : Type) (f : X -> X) (x : X) => f x.
+
+  Definition two : cnat :=
+    fun (X : Type) (f : X -> X) (x : X) => f ( f x ).
+
+  Definition zero : cnat :=
+    fun (X : Type) ( f : X -> X ) (x : X) => x.
+  Definition three : cnat := @doit3times.
+
+  Definition zero' : cnat :=
+    fun (X : Type) (succ : X -> X) (zero : X) => zero.
+  Definition one' : cnat :=
+    fun (X : Type) (succ : X -> X) (zero : X) => succ zero.
+  Definition two' : cnat :=
+    fun (X : Type) (succ : X -> X) (zero : X) => succ (succ zero).
+
+  Example zero_church_peano : zero nat S O = 0.
+  Proof. reflexivity. Qed.
+  Example one_church_peano : one nat S O = 1.
+  Proof. reflexivity. Qed.
+  Example two_church_peano: two nat S O = 2.
+  Proof. reflexivity. Qed.
+
+   
+  Definition scc (n: cnat) : cnat :=
+    fun (X: Type) (f: X->X) (x:X) => f (n X f x).
+    
+     Example scc_1: scc zero = one.
+  Proof.  reflexivity. Qed.
+
+  Example scc_2 : scc one = two.
+  Proof. reflexivity. Qed.
+
+  Example scc_3 : scc two = three.
+  Proof. reflexivity. Qed.
+
+  Definition plus (n m : cnat) : cnat :=
+   fun (X:Type) (f : X -> X) (x:X) => n X f (m X f x).
+
+  Example plus_1: plus zero one = one.
+  Proof. reflexivity. Qed.
+  Example plus_2: plus two three = plus three two.
+  Proof. reflexivity. Qed.
+  Example plus_3 :
+    plus (plus two two) three = plus one (plus three three).
+  Proof. reflexivity. Qed.
+
+  Definition mult (n m : cnat) : cnat :=
+    fun (X:Type) (f: X -> X) (x:X) => n X (m X f) x .
+  
+  Example mult_1 : mult one one = one.
+  Proof. reflexivity. Qed.
+  Example mult_2 : mult zero (plus three three) = zero.
+  Proof. reflexivity. Qed.
+  Example mult_3 : mult two three = plus three three.
+  Proof. reflexivity. Qed.
+
+  Definition exp (n m : cnat) : cnat :=
+    fun (X:Type) => m (X->X) (n X). 
+(*    fun (X:Type) (f : X -> X) (x:X) => n X (mult m X f) x. *)
+  Example exp_1 : exp two two = plus two two.
+  Proof. reflexivity. Qed.
+
+  Example exp_2 : exp three zero = one.
+  Proof. reflexivity. Qed.
+  Example exp_3 : exp three two = plus (mult two (mult two two )) one.
+  Proof. reflexivity. Qed.
+
+  End Church.
+  End Exercises.
+                                  
