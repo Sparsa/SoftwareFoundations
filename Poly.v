@@ -539,7 +539,9 @@ Theorem curry_uncurry : forall (X Y Z : Type)
   Proof. reflexivity. Qed.
 
   Definition plus (n m : cnat) : cnat :=
-   fun (X:Type) (f : X -> X) (x:X) => n X f (m X f x).
+   fun (X:Type) (f : X -> X) (x:X) => n X f (m X f x).  
+   (* fun (X:Type) (g: X -> X) (x:X)  => (n X g ) ((scc m) X g x ).  *)
+
 
   Example plus_1: plus zero one = one.
   Proof. reflexivity. Qed.
@@ -550,18 +552,21 @@ Theorem curry_uncurry : forall (X Y Z : Type)
   Proof. reflexivity. Qed.
 
   Definition mult (n m : cnat) : cnat :=
-    fun (X:Type) (f: X -> X) (x:X) => n X (m X f) x .
+     fun (X:Type) (f: X -> X) (x:X) => n X (m X f) x .
   
   Example mult_1 : mult one one = one.
-  Proof. reflexivity. Qed.
+  Proof.  reflexivity. Qed.
   Example mult_2 : mult zero (plus three three) = zero.
   Proof. reflexivity. Qed.
   Example mult_3 : mult two three = plus three three.
   Proof. reflexivity. Qed.
 
+  Check zero.
+  
+
   Definition exp (n m : cnat) : cnat :=
-    fun (X:Type) => m (X->X) (n X). 
-(*    fun (X:Type) (f : X -> X) (x:X) => n X (mult m X f) x. *)
+    (*fun (X:Type)   => m (X->X) (n X) .*)
+    n cnat (mult m) one.
   Example exp_1 : exp two two = plus two two.
   Proof. reflexivity. Qed.
 
