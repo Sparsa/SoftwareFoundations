@@ -565,8 +565,7 @@ Theorem curry_uncurry : forall (X Y Z : Type)
   
 
   Definition exp (n m : cnat) : cnat :=
-    (*fun (X:Type)   => m (X->X) (n X) .*)
-    n cnat (mult m) one.
+    fun (X:Type)   => m (X->X) (n X) .
   Example exp_1 : exp two two = plus two two.
   Proof. reflexivity. Qed.
 
