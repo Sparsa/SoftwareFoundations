@@ -256,3 +256,19 @@ Theorem eqb_true : forall n m,
          - destruct m as [|m'] eqn:E.
            + discriminate.
            + f_equal. simpl in Ihn'. simpl. intros h1. apply  Ihn' in h1. f_equal. apply h1. Qed.
+
+Search plus. 
+  
+Theorem plus_n_injective : forall n m,
+    n + n = m + m -> n = m.
+Proof. intros n. induction n as [| n' Ihn'].
+       - destruct m as [| m' ].
+         + reflexivity.
+         + simpl. discriminate.
+       - destruct m as [| m'].
+         + discriminate.
+         + intros H.  simpl in H. rewrite succ_plus in H. rewrite succ_plus in H. simpl in H. 
+           specialize f_equal with (f:=S) (A:=nat) (B:=nat) as H'. injection H as Hnm. 
+           f_equal. apply Ihn'. apply Hnm. Qed.
+           
+       
