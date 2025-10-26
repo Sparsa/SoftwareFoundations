@@ -196,4 +196,63 @@ Theorem silly4 : forall (n m p q : nat),
     (n = m -> p = q) ->
     m = n ->
     q = p.
-Proof. intros n m p q H.
+Proof. intros n m p q H1 H2.
+       symmetry in H2.
+       apply  H1 in H2. symmetry in H2. apply H2. Qed.
+
+(* Specialize *)
+(* combination of assert and apply *)
+
+Theorem specialize_example: forall n,
+    (forall m, m * n = 0)
+      -> n = 0.
+  Proof. intros n H.
+         specialize H with (m := 1).
+         rewrite mult_1_1 in H.
+         apply H. Qed.
+
+Example trans_eq_example''' : forall (a b c d e f: nat),
+    [a;b] = [c;d] ->
+    [c;d] = [e;f] ->
+    [a;b] = [e;f].
+
+Proof. intros a b c d e f H1 H2.
+       specialize trans_eq with (y:=[c;d]) as H.
+       apply H. apply H1. apply H2. Qed.
+
+Theorem double_injective_FAILED: forall n m,
+    double n = double m ->
+    n = m.
+Proof.
+  intros n m. induction n as [| n' Ihn'].
+  - (*n = O*) simpl. intros eq.  destruct m as [| m'] eqn:E.
+    + (*m = O *) reflexivity.
+    + (* m = S m' *) discriminate eq.
+  - (* n = S n' *) intros eq. destruct m as [| m'] eqn:E.
+    + (* m = O *) discriminate eq.
+    + (* m = S m'*) f_equal.
+      Abort.
+
+Theorem double_injection : forall n m ,
+    double n = double m ->
+    n = m.
+  Proof.
+    intros n. induction n as [|n' Ihn'].
+    - (* n = O *) simpl. intros m eq. destruct m as [| m'] eqn:E.
+      + (* m = O*) reflexivity.
+      +  (* m = S m' *) discriminate eq.
+    - (* n = S n' *) intros m eq. destruct m as [| m'] eqn:E.
+      + discriminate eq.
+        + f_equal.
+    apply Ihn'. simpl in eq. injection eq as goal. apply goal. Qed.
+
+Theorem eqb_true : forall n m,
+    n =? m = true -> n = m.
+  Proof. intros n.
+         induction n as [|n' Ihn'].
+         - destruct m as [|m'] eqn:E.
+           + reflexivity.
+           + discriminate.
+         - destruct m as [|m'] eqn:E.
+           + discriminate.
+           + f_equal. simpl in Ihn'. simpl. intros h1. apply  Ihn' in h1. f_equal. apply h1. Qed.
