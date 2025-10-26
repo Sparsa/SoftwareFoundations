@@ -270,5 +270,37 @@ Proof. intros n. induction n as [| n' Ihn'].
          + intros H.  simpl in H. rewrite succ_plus in H. rewrite succ_plus in H. simpl in H. 
            specialize f_equal with (f:=S) (A:=nat) (B:=nat) as H'. injection H as Hnm. 
            f_equal. apply Ihn'. apply Hnm. Qed.
+
+
            
        
+Theorem double_injective_take2_Failed : forall n m,
+    double n = double m ->
+    n = m.
+
+  Proof. intros n m. induction m as [| m' Ihm'].
+         - (* m = 0  *) simpl. intros eq. destruct n as [| n'] eqn:E.
+           + reflexivity.
+           + discriminate eq.
+        - intros eq. destruct n as [| n'] eqn:E.
+          + discriminate eq.
+          + f_equal.
+            Abort.
+
+  Theorem double_injective_take2 : forall n m,
+      double n = double m ->
+      n = m.
+  Proof.
+    intros n m.
+    generalize dependent n.
+    induction m as [| m' IHm'].
+    - simpl. intros n eq. destruct n.
+      + reflexivity.
+      + discriminate eq.
+
+    - intros n eq. destruct n as [|n'] eqn:E.
+      + discriminate eq.
+      + f_equal.
+        apply IHm'. injection eq as goal. apply goal. Qed.
+  
+            
