@@ -91,4 +91,59 @@ Proof.
   rewrite <- eq1. apply eq2.
   Qed.
 
+Theorem S_injective : forall (n m : nat),
+    S n = S m ->
+    n = m.
+  Proof.
+    intros n m H1.
+    assert (H2 : n = pred (S n)). {reflexivity.}
+    rewrite H2. rewrite H1. simpl. reflexivity.
+Qed.
   
+  
+Theorem S_injective' : forall (n m : nat),
+    S n = S m ->
+    n = m.
+  Proof.
+    intros n m H. 
+    injection H as Hmn.
+    apply Hmn.
+  Qed.
+  
+
+  Theorem injuection_ex1 : forall (n m o : nat),
+      [n;m] = [o;o] ->
+      n = m.
+    Proof.
+      intros n m o H.
+      injection H as H1 H2.
+      rewrite H1. rewrite H2. reflexivity.
+      Qed.
+
+    
+      
+Theorem injection_ex1 : forall (n m o : nat),
+    [n ;m] = [o;o] ->
+    n = m.
+  Proof.
+    intros n m o H.
+    injection H as H1 H2.
+    rewrite H1. rewrite H2. reflexivity.
+  Qed.
+
+  Example injection_ex3 : forall (X : Type) ( x y z : X  ) ( l j : list X ),
+      x :: y :: l = z :: j ->
+      j = z::l ->
+      x = y.
+  Proof.
+    intros X x y z l j.
+    intros H1 H2.
+    injection H1 as Hii Hi2. 
+    rewrite H2 in Hi2. rewrite <- Hii in Hi2. symmetry. injection Hi2 as Hmm. rewrite Hmm. reflexivity.
+    Qed.
+
+  
+    
+
+
+
