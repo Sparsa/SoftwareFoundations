@@ -302,5 +302,12 @@ Theorem double_injective_take2_Failed : forall n m,
       + discriminate eq.
       + f_equal.
         apply IHm'. injection eq as goal. apply goal. Qed.
-  
-            
+
+Search add_0_r.
+
+
+Lemma sub_add_leb: forall n m, n <=? m = true -> (m-n)+n = m.
+  Proof.
+    intros n.
+    induction n as [| n' IHn'].
+    - intros m H. rewrite
